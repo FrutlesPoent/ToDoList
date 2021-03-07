@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name = "activity_horizontal_margin"> 120dp </dimen>
+    <dimen name="activity_vertical_margin"> 220dp </dimen>
+    <dimen name="size_of_todolist">120px</dimen>
+    <dimen name="activity_button"> 500px</dimen>
+    <dimen name="min_weight_button"> 200dp</dimen>
+    <dimen name="min_height_button"> 60dp</dimen>
+</resources>
