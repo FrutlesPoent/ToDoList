@@ -1,9 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_column="3"
+    android:background="@drawable/background"
+    android:paddingTop="16dp"
     tools:context=".MainToDoListActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_row="0"
+        android:layout_column="0"
+        android:scaleType="fitCenter"
+        tools:srcCompat="@drawable/icon" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_row="0"
+        android:layout_column="1"
+        android:layout_gravity="top"
+        android:layout_marginTop="5px"
+        android:fontFamily="@font/vogue"
+        android:text="@string/you"
+        android:textColor="@color/white"
+        android:textSize="32sp" />
+
+    <Button
+        android:onClick="onClickSettings"
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_row="0"
+        android:layout_column="1"
+        android:layout_gravity="right"
+        android:background="@color/purple_my"
+        android:clickable="true"
+        android:fontFamily="@font/vogue"
+        android:text="@string/settings"
+        android:textColor="@color/white"
+        android:textSize="15dp" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_row="1"
+        android:layout_column="0"
+        android:theme="@style/CircularProgress" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_row="1"
+        android:layout_column="1"
+        android:layout_columnSpan="2"
+        android:layout_marginRight="20dp"
+        android:fontFamily="@font/vogue"
+        android:text="@string/have_to_do"
+        android:textColor="@color/white"
+        android:textSize="20dp" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_row="1"
+        android:layout_column="2"
+        android:layout_marginLeft="-243dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/vogue"
+        android:text="@string/completed"
+        android:textColor="@color/white"
+        android:textSize="20dp" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_row="2"
+        android:layout_column="0"
+        android:layout_columnSpan="2"
+        android:layout_marginLeft="120dp"
+        android:layout_marginTop="50dp"
+        android:fontFamily="@font/vogue"
+        android:text="@string/what_day_today"
+        android:textColor="@color/gray_my"
+        android:textSize="25dp" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_row="3"
+        android:layout_column="0"
+        android:layout_columnSpan="2"
+        android:layout_marginLeft="170dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/vogue"
+        android:text="@string/today_day"
+        android:textColor="@color/white"
+        android:textSize="30dp" />
+
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_row="4"
+        android:layout_column="0"
+        android:layout_columnSpan="2"
+        android:layout_gravity="bottom"
+        />
+
+</GridLayout>
