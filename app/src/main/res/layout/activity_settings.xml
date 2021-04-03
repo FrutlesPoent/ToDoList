@@ -1,33 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
+    android:orientation="vertical"
     tools:context=".SettingsActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/Theme.Welcome.AppBarOverlay">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/Theme.Welcome.PopupOverlay" />
+    <ImageView
+        android:layout_marginTop="200dp"
+        android:layout_gravity="center"
+        android:id="@+id/imageView2"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        tools:srcCompat="@tools:sample/avatars" />
 
-    </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_settings" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
+    <Button
+        android:clickable="true"
+        android:onClick="onClickChangeAvatar"
+        android:textSize="20dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/vogue"
+        android:textColor="@color/white"
+        android:background="@color/purple_my"
+        android:id="@+id/button2"
+        android:layout_gravity="center"
+        android:layout_marginBottom="350dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        android:layout_weight="1"
+        android:text="Change Avatar" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

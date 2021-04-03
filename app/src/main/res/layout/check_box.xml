@@ -4,14 +4,22 @@
     android:layout_height="match_parent">
 
     <CheckBox
+        android:layout_marginTop="15dp"
         android:id="@+id/checkbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true">
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentLeft="true"
+        android:scaleX="1.30"
+        android:scaleY="1.30"
+        android:theme="@style/colored_checkbox">
 
     </CheckBox>
 
     <TextView
+        android:textSize="20dp"
+        android:layout_marginTop="19dp"
+        android:fontFamily="@font/vogue"
+        android:textColor="@color/white"
         android:id="@+id/taskName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,10 +29,33 @@
 
     <TextView
         android:id="@+id/priority"
+        android:textSize="20dp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/vogue"
+        android:layout_marginTop="19dp"
+        android:layout_marginLeft="15dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/taskName">
 
     </TextView>
+
+    <ImageButton
+        android:onClick="onClick"
+        android:clickable="true"
+        android:id="@+id/button_settings_task"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:scaleType="fitCenter"
+        android:layout_toRightOf="@+id/priority"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/vogue"
+        android:textColor="@color/white"
+        android:background="@null"
+        android:textSize="10dp"
+        android:text="@string/settings_button_task"
+        android:src="@drawable/icon_gear_dark"
+        />
 
 </RelativeLayout>

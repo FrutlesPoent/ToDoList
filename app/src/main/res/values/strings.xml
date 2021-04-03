@@ -10,6 +10,7 @@
     <string name="today_day">Today</string>
     <string name="task_name">Task</string>
     <string name="title_activity_settings">SettingsActivity</string>
+    <string name="settings_button_task">Settings</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>

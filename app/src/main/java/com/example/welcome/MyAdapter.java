@@ -5,8 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 
@@ -29,6 +31,7 @@ public class MyAdapter extends ArrayAdapter<States> {
         public TextView taskName;
         public TextView priority;
         public CheckBox checkBox;
+        public ImageButton settingsTaskButton;
     }
 
     @Override
@@ -42,6 +45,7 @@ public class MyAdapter extends ArrayAdapter<States> {
             holder.taskName = (TextView) v.findViewById(R.id.taskName);
             holder.priority = (TextView) v.findViewById(R.id.priority);
             holder.checkBox = (CheckBox) v.findViewById(R.id.checkbox);
+            holder.settingsTaskButton = (ImageButton) v.findViewById(R.id.button_settings_task);
 
             holder.checkBox.setOnCheckedChangeListener((MainToDoListActivity) context);
 
@@ -51,10 +55,14 @@ public class MyAdapter extends ArrayAdapter<States> {
         }
 
         States name = taskStates.get(position);
+
+        if(holder == null){ // to prevent null pointer exception while scrolling
+            return v;
+        }
+
         holder.taskName.setText(name.getTaskText());
-//        holder.priority.setText(name.getPriority());
+        holder.priority.setText(String.valueOf(name.getPriority())); // need to change cause there will be icons of priority, but this will do for now
         holder.checkBox.setChecked(name.getChecked());
-//        holder.checkBox.setTag(name);
 
         return v;
     }

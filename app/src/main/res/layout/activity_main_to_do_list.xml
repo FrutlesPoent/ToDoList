@@ -12,8 +12,8 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
         android:layout_row="0"
         android:layout_column="0"
         android:scaleType="fitCenter"
@@ -32,29 +32,44 @@
         android:textColor="@color/white"
         android:textSize="32sp" />
 
-    <Button
+    <ImageButton
         android:onClick="onClickSettings"
         android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/icon_gear_dark"
         android:layout_row="0"
         android:layout_column="1"
         android:layout_gravity="right"
-        android:background="@color/purple_my"
-        android:clickable="true"
-        android:fontFamily="@font/vogue"
-        android:text="@string/settings"
-        android:textColor="@color/white"
-        android:textSize="15dp" />
+        android:clickable="true" >
+    </ImageButton>
 
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:indeterminateOnly="false"
+        android:progressDrawable="@drawable/circlebar"
+        tools:progress="60"
         android:layout_row="1"
         android:layout_column="0"
-        android:theme="@style/CircularProgress" />
+        android:progress="50"
+        android:theme="@style/my_progress_bar" />
+    <TextView
+        android:id="@+id/progress_bar_percentage"
+        android:layout_row="1"
+        android:layout_column="0"
+        android:textSize="20dp"
+        android:fontFamily="@font/vogue"
+        android:textColor="@color/purple_my"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="28dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="50%"
+        />
 
     <TextView
         android:id="@+id/textView2"
@@ -75,7 +90,7 @@
         android:layout_height="wrap_content"
         android:layout_row="1"
         android:layout_column="2"
-        android:layout_marginLeft="-243dp"
+        android:layout_marginLeft="-253dp"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/vogue"
         android:text="@string/completed"
@@ -90,7 +105,7 @@
         android:layout_column="0"
         android:layout_columnSpan="2"
         android:layout_marginLeft="120dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:fontFamily="@font/vogue"
         android:text="@string/what_day_today"
         android:textColor="@color/gray_my"
@@ -104,20 +119,43 @@
         android:layout_column="0"
         android:layout_columnSpan="2"
         android:layout_marginLeft="170dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:fontFamily="@font/vogue"
         android:text="@string/today_day"
         android:textColor="@color/white"
         android:textSize="30dp" />
 
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </RelativeLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:onClick="onClickAddTask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_row="1"
+        android:layout_column="1"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:backgroundTint="@color/purple_my"
+        android:clickable="true"
+        app:backgroundTint="#EA0E0E"
+        app:borderWidth="0dp"
+        app:srcCompat="@android:drawable/ic_menu_add" />
+
     <ListView
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="30dp"
         android:id="@+id/listView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_row="4"
+        android:layout_row="3"
         android:layout_column="0"
         android:layout_columnSpan="2"
         android:layout_gravity="bottom"
-        />
-
+        android:focusable="false" />
 </GridLayout>
