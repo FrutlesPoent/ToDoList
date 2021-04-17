@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="400dp" android:layout_height="wrap_content">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_text_dialog"
+            android:layout_width="match_parent"
+            android:layout_height="91dp"
+            android:maxLength="100"
+            android:fontFamily="@font/vogue"
+            android:hint="Input yours task" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+    <RadioGroup
+        android:id="@+id/radio_group">
+
+    <RadioButton
+        android:id="@+id/radioButtonFiftyPriority"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="40dp"
+        android:fontFamily="@font/vogue"
+        android:text="50 priority" />
+
+    <RadioButton
+        android:id="@+id/radioButtonSixtyPriority"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:textSize="40dp"
+        android:fontFamily="@font/vogue"
+        android:text="60 priority" />
+    </RadioGroup>
+
+
+    <Button
+        android:id="@+id/buttonSendData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:text="Create Task"
+        android:textSize="30dp"
+        android:fontFamily="@font/vogue"
+        />
+
+    <Button
+        android:id="@+id/button_dismiss"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:text="Cancel"
+        android:textSize="30dp"
+        android:fontFamily="@font/vogue"
+        />
+
+
+</TableLayout>
