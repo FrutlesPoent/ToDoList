@@ -13,6 +13,7 @@ public class States {
         this.checked = false;
     }
 
+
     public String getTaskText(){
         return taskText;
     }
