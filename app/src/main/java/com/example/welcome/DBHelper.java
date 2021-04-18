@@ -16,15 +16,17 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String KEY_TASK = "task"; // our task
     public static final String KEY_TIME = "time"; // time left
     public static final String KEY_PRIORITY = "priority"; // task priority
+    public static final String KEY_COMPLETED = "completed";
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME,null, DATABASE_VERSION);
+//        context.deleteDatabase(DATABASE_NAME); //delete
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + TABLE_TASKS + "(" + KEY_ID + " integer primary key,"
-                + KEY_TASK + " text," + KEY_PRIORITY + " text" + ")");
+                + KEY_TASK + " text," + KEY_PRIORITY + " text," + KEY_TIME + " text," + KEY_COMPLETED + " integer" + ")");
 
     }
 
