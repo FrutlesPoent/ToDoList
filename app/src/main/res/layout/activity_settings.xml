@@ -19,14 +19,14 @@
 
 
     <Button
+        android:id="@+id/change_avatar_button"
         android:clickable="true"
-        android:onClick="onClickChangeAvatar"
+        android:onClick="onClickChangeAvatarButton"
         android:textSize="20dp"
         android:layout_marginTop="10dp"
         android:fontFamily="@font/vogue"
         android:textColor="@color/white"
         android:background="@color/purple_my"
-        android:id="@+id/button2"
         android:layout_gravity="center"
         android:layout_marginBottom="350dp"
         android:layout_width="wrap_content"
