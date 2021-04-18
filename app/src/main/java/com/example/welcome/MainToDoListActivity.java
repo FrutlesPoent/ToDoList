@@ -19,10 +19,16 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import org.w3c.dom.Text;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class MainToDoListActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
@@ -30,8 +36,11 @@ public class MainToDoListActivity extends AppCompatActivity implements CompoundB
     private static final int MAX_LEVEL = 100;
     private static final long GAUGE_ANIMATION_DURATION = 5000;
     private ProgressBar myProgressBar;
-    private int globalPriority;
+    private static String globalPriority;
     private RadioGroup radioGroup;
+    private int idTask;
+    private String todoPhrase = "Today you have to do";
+    private int counterCompleted = 0;
 
     private DBHelper dbHelper;
     private Dialog dialog;
@@ -73,32 +82,35 @@ public class MainToDoListActivity extends AppCompatActivity implements CompoundB
                 String taskName = getTaskName.getText().toString();
                 int priorityTask;
                 radioGroup = dialog.findViewById(R.id.radio_group);
+                writePriorityTask(0);
                 radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
                     @Override
                     public void onCheckedChanged(RadioGroup group, int checkedId) { // need to fix
                         switch (checkedId){
                             case - 1:
-                                globalPriority = 0;
+                                writePriorityTask(0);
+                                globalPriority = "0";
                                 System.out.println(globalPriority);
                                 break;
                             case R.id.radioButtonFiftyPriority:
-                                globalPriority = 50;
+                                globalPriority = "50";
                                 System.out.println(globalPriority);
                                 break;
                             case R.id.radioButtonSixtyPriority:
-                                globalPriority = 60;
+                                globalPriority = "60";
                                 System.out.println(globalPriority);
                                 break;
                         }
                     }
                 });
-                priorityTask = globalPriority;
 
                 if (!taskName.equals("")) {
-                    statesList.add(new States(priorityTask, taskName));
+                    dataBaseEnterData(taskName, globalPriority, getDateMyString());
 
-                    dataBaseEnterData(taskName, String.valueOf(priorityTask));
+                    statesList.add(new States(globalPriority, taskName, idTask));
+                    haveToDoTask(1); // add one task to textView
+
                 }
                 dialog.dismiss();
             }
@@ -113,6 +125,22 @@ public class MainToDoListActivity extends AppCompatActivity implements CompoundB
 
     }
 
+    private void writePriorityTask(int index){
+        System.out.println("true");
+        switch (index){
+            case 0:
+                globalPriority = "0";
+                break;
+            case 50:
+                globalPriority = "50";
+                break;
+            case 60:
+                globalPriority = "60";
+                break;
+        }
+
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +152,8 @@ public class MainToDoListActivity extends AppCompatActivity implements CompoundB
         lv = (ListView) findViewById(R.id.listView1);
         dialog = new Dialog(MainToDoListActivity.this);
         dbHelper = new DBHelper(this);
+        haveToDoTask(0);
+        checkOldTaskYet();
 
         try {
             dataBaseReturnData();
@@ -143,6 +173,12 @@ public class MainToDoListActivity extends AppCompatActivity implements CompoundB
             s = statesList.get(pos);
             statesList.remove(pos);
             s.setChecked(true);
+            System.out.println("IdTask is = " + s.getIdTask());
+            haveToDoTask(-1);
+            counterCompleted += 1; // add + 1 to completed textView
+            completedTaskDataBase();
+            changeTextViewCompleted();
+            dataBaseDeleteDataSingle(s.getIdTask());
             try {
                 reWrite();
             } catch (InterruptedException e) {
@@ -153,20 +189,94 @@ public class MainToDoListActivity extends AppCompatActivity implements CompoundB
 
     private void reWrite() throws InterruptedException {
         plAdapter = new MyAdapter(statesList, this);
-        Thread.sleep(1500);
         lv.setAdapter(plAdapter);
     }
 
-    public void dataBaseEnterData(String taskName, String priority){
+    private void haveToDoTask(int add){
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        Cursor cursor = database.query(DBHelper.TABLE_TASKS, null,null,null, null, null, null);
+        int toDoTaskCounter = 0;
+
+        if(cursor.moveToFirst()){
+            int idIndex = cursor.getColumnIndex(DBHelper.KEY_ID);
+
+            do {
+                toDoTaskCounter += 1;
+            }while(cursor.moveToNext());
+        }
+
+        toDoTaskCounter += add;
+        TextView textToDo = findViewById(R.id.textView2);
+        textToDo.setText(todoPhrase + " " +  toDoTaskCounter);
+    }
+
+    private String getDateMyString(){
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat currentTime = new SimpleDateFormat("dd");
+        String date = currentTime.format(calendar.getTime());
+
+        return date;
+    }
+
+    private void checkOldTaskYet(){
+        System.out.println("Delete Because old");
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        Cursor cursor = database.query(DBHelper.TABLE_TASKS, null,null,null, null, null, null);
+
+        if (cursor.moveToFirst()){
+            int idIndex = cursor.getColumnIndex(DBHelper.KEY_ID);
+            int dateIndex = cursor.getColumnIndex(DBHelper.KEY_TIME);
+            String dataBaseDate = cursor.getString(dateIndex);
+            String nowDate = getDateMyString();
+
+            do {
+                if (!nowDate.equals(dataBaseDate)) {
+                    idTask = cursor.getInt(idIndex);
+                    dataBaseDeleteDataSingle(idTask);
+                }
+            }while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        dbHelper.close();
+    }
+
+    private void changeTextViewCompleted(){
+        checkOldTaskYet();
+        TextView text = findViewById(R.id.textView7);
+        String textToInput = "Today you completed";
+        text.setText(textToInput + " " + counterCompleted);
+    }
+
+    private void completedTaskDataBase(){
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBHelper.KEY_COMPLETED, counterCompleted);
+    }
+
+    public void dataBaseEnterData(String taskName, String priority, String time){
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(DBHelper.KEY_TASK, taskName);
-//        contentValues.put(DBHelper.KEY_PRIORITY, priority);
+        contentValues.put(DBHelper.KEY_PRIORITY, priority);
+        contentValues.put(DBHelper.KEY_TIME, time);
 
         database.insert(DBHelper.TABLE_TASKS, null, contentValues);
 
+        Cursor cursor = database.query(DBHelper.TABLE_TASKS, null,null,null, null, null, null);
 
+        if (cursor.moveToFirst()){
+            int idIndex = cursor.getColumnIndex(DBHelper.KEY_ID);
+            int nameIndex = cursor.getColumnIndex(DBHelper.KEY_TASK);
+//            int priorityId = cursor.getColumnIndex(DBHelper.KEY_PRIORITY);
+            do {
+                if (cursor.getString(nameIndex).equals(taskName))
+                    idTask = cursor.getInt(idIndex);
+            }while (cursor.moveToNext());
+        }
+
+        cursor.close();
         dbHelper.close();
     }
 
@@ -178,16 +288,27 @@ public class MainToDoListActivity extends AppCompatActivity implements CompoundB
             int idIndex = cursor.getColumnIndex(DBHelper.KEY_ID);
             int nameIndex = cursor.getColumnIndex(DBHelper.KEY_TASK);
             int priority = cursor.getColumnIndex(DBHelper.KEY_PRIORITY);
+            int completedIndex = cursor.getColumnIndex(DBHelper.KEY_COMPLETED);
 
             do {
                 Log.d("mLog", " ID = " + cursor.getInt(idIndex) +
-                        ", name = " + cursor.getString(nameIndex));
-                statesList.add(new States(0, cursor.getString(nameIndex)));
+                        ", name = " + cursor.getString(nameIndex) + " priority = " + cursor.getInt(priority));
+                statesList.add(new States(cursor.getString(priority), cursor.getString(nameIndex), cursor.getInt(idIndex)));
                 reWrite();
+                counterCompleted = cursor.getInt(completedIndex);
+                changeTextViewCompleted();
             } while(cursor.moveToNext());
 
         } else
             Log.d("mLog", " empty");
+        cursor.close();
+    }
+
+    public void dataBaseDeleteDataSingle(int id){
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        Cursor cursor = database.query(DBHelper.TABLE_TASKS, null,null,null, null, null, null);
+        database.delete(DBHelper.TABLE_TASKS, DBHelper.KEY_ID + "=" + id, null);
+        System.out.println("true");
         cursor.close();
     }
 
