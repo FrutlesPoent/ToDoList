@@ -47,6 +47,7 @@ public class SettingsActivity extends AppCompatActivity {
         ImageView imageView = findViewById(R.id.imageView2);
         imageView.setImageResource(R.drawable.icon);
         imageView2 = (ImageView)findViewById(R.id.imageView2);
+        getImageFromDB();
 
 
     }
@@ -56,6 +57,19 @@ public class SettingsActivity extends AppCompatActivity {
         imageView2 = (ImageView)findViewById(R.id.imageView2);
         getImage();
 
+    }
+
+    private void getImageFromDB(){
+        dbHelper = new DBHelper(this);
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        Cursor cursor = database.query(DBHelper.TABLE_IMAGE, null,null,null, null, null, null);
+        if (cursor.moveToFirst()){
+            byte[] image = cursor.getBlob(1);
+            Bitmap newImage = BitmapFactory.decodeByteArray(image, 0, image.length);
+            imageView2 = findViewById(R.id.imageView2);
+            Bitmap bMapScaled = Bitmap.createScaledBitmap(newImage, 500, 500, false);
+            imageView2.setImageBitmap(bMapScaled);
+        }
     }
 
 
