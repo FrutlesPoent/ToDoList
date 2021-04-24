@@ -13,8 +13,8 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
             android:theme="@style/Theme.Welcome.NoActionBar"></activity>
-        <activity android:name=".MainToDoListActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainToDoListActivity" >
+<!--        <activity android:name=".MainActivity">-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
