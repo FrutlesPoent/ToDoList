@@ -62,6 +62,7 @@ public class MainToDoListActivity extends AppCompatActivity implements CompoundB
         ImageView imageView = findViewById(R.id.imageView);
         imageView.setImageResource(R.drawable.icon);
 
+
         myProgressBar = findViewById(R.id.progressBar);
         myProgressBar.setMin(0);
         myProgressBar.setMax(100);
@@ -82,6 +83,13 @@ public class MainToDoListActivity extends AppCompatActivity implements CompoundB
             e.printStackTrace();
         }
 
+    }
+
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        getImage();
     }
 
     public void onClickSettings(View view){ // move to Settings Window
