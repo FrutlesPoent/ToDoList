@@ -45,7 +45,7 @@ public class MyAdapter extends ArrayAdapter<States> {
             holder.taskName = (TextView) v.findViewById(R.id.taskName);
             holder.priority = (TextView) v.findViewById(R.id.priority);
             holder.checkBox = (CheckBox) v.findViewById(R.id.checkbox);
-            holder.settingsTaskButton = (ImageButton) v.findViewById(R.id.button_settings_task);
+//            holder.settingsTaskButton = (ImageButton) v.findViewById(R.id.button_settings_task);
 
             holder.checkBox.setOnCheckedChangeListener((MainToDoListActivity) context);
 
