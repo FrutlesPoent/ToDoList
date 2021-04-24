@@ -1,14 +1,17 @@
 package com.example.welcome;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,17 +21,15 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputEditText;
 
-import org.w3c.dom.Text;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 public class MainToDoListActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
@@ -36,11 +37,13 @@ public class MainToDoListActivity extends AppCompatActivity implements CompoundB
     private static final int MAX_LEVEL = 100;
     private static final long GAUGE_ANIMATION_DURATION = 5000;
     private ProgressBar myProgressBar;
-    private static String globalPriority;
-    private RadioGroup radioGroup;
+    private  static int globalPriority;
     private int idTask;
+    final int progressBar = calculateProgress();
+    private int toDoTaskCounter;
     private String todoPhrase = "Today you have to do";
     private int counterCompleted = 0;
+    private ImageView imageView;
 
     private DBHelper dbHelper;
     private Dialog dialog;
@@ -50,17 +53,41 @@ public class MainToDoListActivity extends AppCompatActivity implements CompoundB
     MyAdapter plAdapter;
 
 
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main_to_do_list);
+        ImageView imageView = findViewById(R.id.imageView);
+        imageView.setImageResource(R.drawable.icon);
+
+        myProgressBar = findViewById(R.id.progressBar);
+        myProgressBar.setMin(0);
+        myProgressBar.setMax(100);
+        lv = (ListView) findViewById(R.id.listView1);
+        dialog = new Dialog(MainToDoListActivity.this);
+        dbHelper = new DBHelper(this);
+        getImage();
+        getCompletedTaskDataBase();
+        changeTextViewCompleted();
+        haveToDoTask(0);
+        myProgressBar.setProgress(calculateProgress());
+
+
+        try {
+            dataBaseReturnData();
+            haveToDoTask(0);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public void onClickSettings(View view){ // move to Settings Window
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
 
-    }
-
-    public void onClick(View view) { // check progressBar
-        ObjectAnimator animator = ObjectAnimator.ofInt(myProgressBar, "progress", 0, MAX_LEVEL);
-        animator.setInterpolator(GAUGE_ANIMATION_INTERPOLATOR);
-        animator.setDuration(GAUGE_ANIMATION_DURATION);
-        animator.start();
     }
 
     public void onClickAddTask(View view){
@@ -79,37 +106,29 @@ public class MainToDoListActivity extends AppCompatActivity implements CompoundB
             @Override
             public void onClick(View v) {
                 TextInputEditText getTaskName = dialog.findViewById(R.id.input_text_dialog);
-                String taskName = getTaskName.getText().toString();
-                int priorityTask;
-                radioGroup = dialog.findViewById(R.id.radio_group);
-                writePriorityTask(0);
-                radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                RadioButton lowPriority = dialog.findViewById(R.id.radioButtonFiftyPriority);
+                RadioButton mediumPriority = dialog.findViewById(R.id.radioButtonSixtyPriority);
+                RadioButton highPriority = dialog.findViewById(R.id.radioButtonSeventy);
+                RadioGroup radioGroup = dialog.findViewById(R.id.radio_group);
+                if (lowPriority.isChecked())
+                    globalPriority = 50;
 
-                    @Override
-                    public void onCheckedChanged(RadioGroup group, int checkedId) { // need to fix
-                        switch (checkedId){
-                            case - 1:
-                                writePriorityTask(0);
-                                globalPriority = "0";
-                                System.out.println(globalPriority);
-                                break;
-                            case R.id.radioButtonFiftyPriority:
-                                globalPriority = "50";
-                                System.out.println(globalPriority);
-                                break;
-                            case R.id.radioButtonSixtyPriority:
-                                globalPriority = "60";
-                                System.out.println(globalPriority);
-                                break;
-                        }
-                    }
-                });
+                if (mediumPriority.isChecked())
+                    globalPriority = 60;
+
+                if (highPriority.isChecked())
+                    globalPriority = 70;
+
+                plAdapter.notifyDataSetChanged();
+                String taskName = getTaskName.getText().toString();
+                System.out.println("Global" + globalPriority);
 
                 if (!taskName.equals("")) {
                     dataBaseEnterData(taskName, globalPriority, getDateMyString());
 
                     statesList.add(new States(globalPriority, taskName, idTask));
                     haveToDoTask(1); // add one task to textView
+                    myProgressBar.setProgress(calculateProgress());
 
                 }
                 dialog.dismiss();
@@ -119,54 +138,16 @@ public class MainToDoListActivity extends AppCompatActivity implements CompoundB
         dialog.setCancelable(false); // can't cancel if missclick on screen
 
         dialog.show(); // show dialog
-
+//        plAdapter.notifyDataSetChanged();
         plAdapter = new MyAdapter(statesList, this); // show task on list
+
         lv.setAdapter(plAdapter);
-
     }
 
-    private void writePriorityTask(int index){
-        System.out.println("true");
-        switch (index){
-            case 0:
-                globalPriority = "0";
-                break;
-            case 50:
-                globalPriority = "50";
-                break;
-            case 60:
-                globalPriority = "60";
-                break;
-        }
-
-    }
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_to_do_list);
-        ImageView imageView = findViewById(R.id.imageView);
-        imageView.setImageResource(R.drawable.icon);
-
-        lv = (ListView) findViewById(R.id.listView1);
-        dialog = new Dialog(MainToDoListActivity.this);
-        dbHelper = new DBHelper(this);
-        haveToDoTask(0);
-        checkOldTaskYet();
-
-        try {
-            dataBaseReturnData();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) { // check list of task
         int pos = lv.getPositionForView(buttonView);
-        int del = 0;
         States s = statesList.get(pos);
 
         if (pos != ListView.INVALID_POSITION) {
@@ -187,25 +168,45 @@ public class MainToDoListActivity extends AppCompatActivity implements CompoundB
         }
     }
 
+    private int calculateProgress(){
+        if (counterCompleted == 0)
+            return 0;
+
+        if (toDoTaskCounter == 0)
+            return 100;
+        int summ = toDoTaskCounter + counterCompleted;
+        double a = (counterCompleted * 100) / summ;
+        System.out.println((int)a);
+        return (int) a;
+    }
+
+
     private void reWrite() throws InterruptedException {
         plAdapter = new MyAdapter(statesList, this);
+        myProgressBar.setProgress(calculateProgress());
+        if (plAdapter !=null){
+            plAdapter.notifyDataSetChanged(); // to not drop app
+        }
         lv.setAdapter(plAdapter);
     }
 
     private void haveToDoTask(int add){
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         Cursor cursor = database.query(DBHelper.TABLE_TASKS, null,null,null, null, null, null);
-        int toDoTaskCounter = 0;
+        int valAddTask = 0;
 
-        if(cursor.moveToFirst()){
-            int idIndex = cursor.getColumnIndex(DBHelper.KEY_ID);
-
-            do {
-                toDoTaskCounter += 1;
-            }while(cursor.moveToNext());
+        if(add >= 0) {
+            if (cursor.moveToFirst()) {
+                do {
+                    valAddTask += 1;
+                } while (cursor.moveToNext());
+            }
+            valAddTask -= toDoTaskCounter;
+        }else if(add < 0){
+            toDoTaskCounter += add;
         }
 
-        toDoTaskCounter += add;
+        toDoTaskCounter += valAddTask;
         TextView textToDo = findViewById(R.id.textView2);
         textToDo.setText(todoPhrase + " " +  toDoTaskCounter);
     }
@@ -219,7 +220,6 @@ public class MainToDoListActivity extends AppCompatActivity implements CompoundB
     }
 
     private void checkOldTaskYet(){
-        System.out.println("Delete Because old");
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         Cursor cursor = database.query(DBHelper.TABLE_TASKS, null,null,null, null, null, null);
 
@@ -231,14 +231,15 @@ public class MainToDoListActivity extends AppCompatActivity implements CompoundB
 
             do {
                 if (!nowDate.equals(dataBaseDate)) {
+                    counterCompleted = 0; // to zero "completed" table
                     idTask = cursor.getInt(idIndex);
                     dataBaseDeleteDataSingle(idTask);
                 }
             }while (cursor.moveToNext());
         }
-
         cursor.close();
         dbHelper.close();
+
     }
 
     private void changeTextViewCompleted(){
@@ -248,13 +249,45 @@ public class MainToDoListActivity extends AppCompatActivity implements CompoundB
         text.setText(textToInput + " " + counterCompleted);
     }
 
+    private void getImage(){
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        Cursor cursor = database.query(DBHelper.TABLE_IMAGE, null,null,null, null, null, null);
+        if (cursor.moveToFirst()){
+            byte[] image = cursor.getBlob(1);
+            Bitmap newImage = BitmapFactory.decodeByteArray(image, 0, image.length);
+            imageView = findViewById(R.id.imageView);
+            Bitmap bMapScaled = Bitmap.createScaledBitmap(newImage, 500, 500, false);
+            imageView.setImageBitmap(bMapScaled);
+        }
+    }
+
     private void completedTaskDataBase(){
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(DBHelper.KEY_COMPLETED, counterCompleted);
+        Cursor cursor = database.query(DBHelper.TABLE_COMPLETED, null,null,null, null, null, null);
+        if (cursor.getCount() > 0){
+            database.update(DBHelper.TABLE_COMPLETED, contentValues,DBHelper.KEY_COMPLETED + "=" + DBHelper.KEY_COMPLETED, null);
+        } else{
+            database.insert(DBHelper.TABLE_COMPLETED, null, contentValues);
+        }
+        cursor.close();
+        database.close();
     }
 
-    public void dataBaseEnterData(String taskName, String priority, String time){
+    private void getCompletedTaskDataBase(){
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        Cursor cursor = database.query(DBHelper.TABLE_COMPLETED,null,null,null, null, null, null);
+        if (cursor.moveToFirst()) {
+            int idIndex = cursor.getColumnIndex(DBHelper.KEY_COMPLETED);
+            do {
+                counterCompleted = cursor.getInt(idIndex);
+            } while (cursor.moveToNext());
+        }
+
+    }
+
+    private void dataBaseEnterData(String taskName, int priority, String time){
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
@@ -269,7 +302,6 @@ public class MainToDoListActivity extends AppCompatActivity implements CompoundB
         if (cursor.moveToFirst()){
             int idIndex = cursor.getColumnIndex(DBHelper.KEY_ID);
             int nameIndex = cursor.getColumnIndex(DBHelper.KEY_TASK);
-//            int priorityId = cursor.getColumnIndex(DBHelper.KEY_PRIORITY);
             do {
                 if (cursor.getString(nameIndex).equals(taskName))
                     idTask = cursor.getInt(idIndex);
@@ -280,22 +312,20 @@ public class MainToDoListActivity extends AppCompatActivity implements CompoundB
         dbHelper.close();
     }
 
-    public void dataBaseReturnData() throws InterruptedException {
+    private void dataBaseReturnData() throws InterruptedException {
         SQLiteDatabase database = dbHelper.getReadableDatabase();
-        Cursor cursor = database.query(DBHelper.TABLE_TASKS, null,null,null, null, null, null);
+        Cursor cursor = database.query(DBHelper.TABLE_TASKS, null,null,null, null, null, DBHelper.KEY_PRIORITY + " DESC");
 
         if (cursor.moveToFirst()){
             int idIndex = cursor.getColumnIndex(DBHelper.KEY_ID);
             int nameIndex = cursor.getColumnIndex(DBHelper.KEY_TASK);
             int priority = cursor.getColumnIndex(DBHelper.KEY_PRIORITY);
-            int completedIndex = cursor.getColumnIndex(DBHelper.KEY_COMPLETED);
 
             do {
                 Log.d("mLog", " ID = " + cursor.getInt(idIndex) +
                         ", name = " + cursor.getString(nameIndex) + " priority = " + cursor.getInt(priority));
-                statesList.add(new States(cursor.getString(priority), cursor.getString(nameIndex), cursor.getInt(idIndex)));
+                statesList.add(new States(cursor.getInt(priority), cursor.getString(nameIndex), cursor.getInt(idIndex)));
                 reWrite();
-                counterCompleted = cursor.getInt(completedIndex);
                 changeTextViewCompleted();
             } while(cursor.moveToNext());
 
@@ -304,12 +334,13 @@ public class MainToDoListActivity extends AppCompatActivity implements CompoundB
         cursor.close();
     }
 
-    public void dataBaseDeleteDataSingle(int id){
+    private void dataBaseDeleteDataSingle(int id){
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         Cursor cursor = database.query(DBHelper.TABLE_TASKS, null,null,null, null, null, null);
         database.delete(DBHelper.TABLE_TASKS, DBHelper.KEY_ID + "=" + id, null);
-        System.out.println("true");
         cursor.close();
     }
+
+
 
 }
