@@ -27,6 +27,8 @@ import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import org.w3c.dom.Text;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -69,6 +71,7 @@ public class MainToDoListActivity extends AppCompatActivity implements CompoundB
         lv = (ListView) findViewById(R.id.listView1);
         dialog = new Dialog(MainToDoListActivity.this);
         dbHelper = new DBHelper(this);
+        getTodayDate();
         getImage();
         getCompletedTaskDataBase();
         changeTextViewCompleted();
@@ -174,6 +177,14 @@ public class MainToDoListActivity extends AppCompatActivity implements CompoundB
                 e.printStackTrace();
             }
         }
+    }
+
+    private void getTodayDate(){
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat currentTime = new SimpleDateFormat("EEEE, d LLLL");
+        String date = currentTime.format(calendar.getTime());
+        TextView textView = findViewById(R.id.textView4);
+        textView.setText(date);
     }
 
     private int calculateProgress(){
