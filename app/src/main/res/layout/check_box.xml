@@ -40,22 +40,5 @@
 
     </TextView>
 
-    <ImageButton
-        android:onClick="onClick"
-        android:clickable="true"
-        android:id="@+id/button_settings_task"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:scaleType="fitCenter"
-        android:layout_toRightOf="@+id/priority"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="12dp"
-        android:fontFamily="@font/vogue"
-        android:textColor="@color/white"
-        android:background="@null"
-        android:textSize="10dp"
-        android:text="@string/settings_button_task"
-        android:src="@drawable/icon_gear_dark"
-        />
 
 </RelativeLayout>
