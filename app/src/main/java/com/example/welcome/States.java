@@ -4,27 +4,31 @@ public class States {
 
     private boolean checked = false;
     private String taskText = null;
-    private String priority = "0";
+    private String priority = "";
     private int idTask; // Id from database for delete
 
-
-//    public States(int priority, String taskText){
-//        this.priority = priority;
-//        this.taskText = taskText;
-//        this.checked = false;
-//    }
-
-    public States(String priority, String taskText, int id){
-        this.priority = priority;
+    public States(int priority, String taskText, int id){
+        this.priority = checkPriority(priority);
         this.taskText = taskText;
         this.checked = false;
         this.idTask = id;
     }
 
-    public States(String priority, String taskText){
-        this.priority = priority;
+    public States(int priority, String taskText){
+        this.priority = checkPriority(priority);
         this.taskText = taskText;
         this.checked = false;
+    }
+
+    private String checkPriority(int priority){
+        if (priority == 50)
+            return "Low";
+        if(priority == 60)
+            return "Medium";
+        if(priority == 70)
+            return "High";
+        return "Zero";
+
     }
 
 
@@ -36,9 +40,6 @@ public class States {
         return taskText;
     }
 
-//    public int getPriority(){
-//        return priority;
-//    }
 
     public String getPriority(){
         return priority;
@@ -48,8 +49,8 @@ public class States {
         return checked;
     }
 
-    public void setPriority(String priority){
-        this.priority = priority;
+    public void setPriority(int priority){
+        this.priority = checkPriority(priority);
     }
 
 
